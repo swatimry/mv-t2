@@ -1,28 +1,47 @@
-package com.example.automation.tests;
+package com.example.automation;
 
-import com.example.automation.pages.LoginPage;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoginAutomationTest {
 
     @Test
-    public void testValidLogin() {
-        LoginPage loginPage = new LoginPage();
-        loginPage.setUsername("testuser");
-        loginPage.setPassword("password123");
-        loginPage.clickLogin();
+    public void testLogin() {
         
-        assertTrue(loginPage.isLoggedIn(), "Login should be successful for valid credentials");
-    }
+        System.setProperty("webdriver.chrome.driver", "C://Program Files//chromedriver//chromedriver.exe");
 
-    @Test
-    public void testInvalidLogin() {
-        LoginPage loginPage = new LoginPage();
-        loginPage.setUsername("invaliduser");
-        loginPage.setPassword("wrongpassword");
-        loginPage.clickLogin();
         
-        assertFalse(loginPage.isLoggedIn(), "Login should fail for invalid credentials");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); 
+        
+        
+
+        WebDriver driver = new ChromeDriver(options);
+
+        try {
+            
+            LoginPage loginPage = new LoginPage(driver);
+
+            
+            loginPage.openLoginPage("https://the-internet.herokuapp.com/login");
+
+            
+            loginPage.setUsername("tomsmith");
+            loginPage.setPassword("SuperSecretPassword!");
+            loginPage.clickLoginButton();
+
+            
+            String successMessage = loginPage.getSuccessMessage();
+            assertTrue(successMessage.contains("You logged into a secure area!"),
+                    "Login  successful ");
+
+        } finally {
+            
+            driver.quit();
+        }
     }
 }
